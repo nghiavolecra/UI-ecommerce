@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { DollarSign, Calendar, Users, Award, TrendingUp, Plus } from "lucide-react";
+import { DollarSign, Calendar, Users, Award, TrendingUp, Plus, Package, Truck, Percent, Wallet, ArrowDownToLine, ShieldCheck } from "lucide-react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -39,8 +38,55 @@ const revenueData = [
   { month: "Jun", revenue: 12480 }
 ];
 
+const orderPipeline = [
+  { id: "ORD-9824", buyer: "Linh Pham", item: "Performance Tank", status: "Processing", total: 78, updated: "Today" },
+  { id: "ORD-9820", buyer: "Gia Bui", item: "Adjustable Dumbbells", status: "Shipping", total: 299, updated: "1h ago" },
+  { id: "ORD-9811", buyer: "Bao Tran", item: "Premium Whey", status: "Completed", total: 54, updated: "Yesterday" },
+];
+
+const walletHistory = [
+  { id: "WD-1210", type: "Withdrawal", amount: -750, date: "Aug 12", status: "Completed" },
+  { id: "PM-2204", type: "Product Sale", amount: 199, date: "Aug 11", status: "Settled" },
+  { id: "PM-2197", type: "Service Booking", amount: 120, date: "Aug 10", status: "Settled" },
+];
+
+const promotionRules = [
+  { id: 1, name: "Back to Gym -10%", window: "Aug 1 - Aug 15", appliedTo: "Supplements", status: "Active" },
+  { id: 2, name: "Combo Save $20", window: "Aug 20 - Aug 31", appliedTo: "Packages", status: "Scheduled" },
+];
+
+const registrationOrders = [
+  { id: "BOOK-2390", member: "Hà My", plan: "8-week Strength", status: "processing", date: "Aug 14", total: "$420" },
+  { id: "BOOK-2381", member: "Anh Tuấn", plan: "Hybrid Coaching", status: "active", date: "Aug 12", total: "$310" },
+  { id: "BOOK-2374", member: "Khánh Linh", plan: "Nutrition Reset", status: "cancelled", date: "Aug 10", total: "$180" },
+  { id: "BOOK-2369", member: "Minh Châu", plan: "PT Drop-ins", status: "refunded", date: "Aug 09", total: "$96" },
+];
+
 export function DesktopPTDashboard() {
   const [showAddPackage, setShowAddPackage] = useState(false);
+  const [productForm, setProductForm] = useState({
+    name: "",
+    price: "",
+    stock: "",
+    category: "",
+    description: "",
+  });
+  const [withdrawAmount, setWithdrawAmount] = useState(500);
+
+  const statusTone = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-500/15 text-green-700";
+      case "processing":
+        return "bg-yellow-500/15 text-yellow-700";
+      case "cancelled":
+        return "bg-red-500/15 text-red-700";
+      case "refunded":
+        return "bg-blue-500/15 text-blue-700";
+      default:
+        return "bg-muted text-muted-foreground";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -245,6 +291,268 @@ export function DesktopPTDashboard() {
             </Card>
           </div>
         </div>
+
+        {/* Seller toolkit to satisfy PT marketplace requirements */}
+        <div className="grid grid-cols-3 gap-8 mt-10">
+          <Card className="p-6 border-border bg-card space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm">YC-SEL-01 & YC-SEL-02</p>
+                <h3 className="text-foreground">Product Publishing</h3>
+              </div>
+              <Badge className="bg-primary/15 text-primary border-0">New</Badge>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                placeholder="Product name"
+                value={productForm.name}
+                onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
+                className="bg-background border-border h-10 text-sm"
+              />
+              <Input
+                placeholder="Category"
+                value={productForm.category}
+                onChange={(e) => setProductForm(prev => ({ ...prev, category: e.target.value }))}
+                className="bg-background border-border h-10 text-sm"
+              />
+              <Input
+                type="number"
+                placeholder="Price"
+                value={productForm.price}
+                onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
+                className="bg-background border-border h-10 text-sm"
+              />
+              <Input
+                type="number"
+                placeholder="Stock"
+                value={productForm.stock}
+                onChange={(e) => setProductForm(prev => ({ ...prev, stock: e.target.value }))}
+                className="bg-background border-border h-10 text-sm"
+              />
+              <Textarea
+                placeholder="Full description, ingredients, sizing..."
+                value={productForm.description}
+                onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
+                className="bg-background border-border text-sm col-span-2"
+              />
+            </div>
+
+            <Button className="bg-primary text-white h-10 w-full">Publish product</Button>
+
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div className="p-3 rounded-lg border border-border bg-background">
+                <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <Package className="w-4 h-4" />
+                  <span>Active SKUs</span>
+                </div>
+                <p className="text-foreground text-lg">42</p>
+              </div>
+              <div className="p-3 rounded-lg border border-border bg-background">
+                <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <Truck className="w-4 h-4" />
+                  <span>Low stock</span>
+                </div>
+                <p className="text-foreground text-lg">3</p>
+              </div>
+              <div className="p-3 rounded-lg border border-border bg-background">
+                <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <Percent className="w-4 h-4" />
+                  <span>Promo-ready</span>
+                </div>
+                <p className="text-foreground text-lg">12</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-6 border-border bg-card space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm">YC-SEL-03 & YC-SEL-04</p>
+                <h3 className="text-foreground">Order & Fulfillment</h3>
+              </div>
+              <Badge className="bg-primary/15 text-primary border-0">Live</Badge>
+            </div>
+
+            <Tabs defaultValue="pipeline">
+              <TabsList className="bg-background border border-border">
+                <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
+                <TabsTrigger value="shipping">Shipping</TabsTrigger>
+              </TabsList>
+              <TabsContent value="pipeline" className="mt-4 space-y-3">
+                {orderPipeline.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-background">
+                    <div>
+                      <p className="text-foreground text-sm">{order.item}</p>
+                      <p className="text-muted-foreground text-xs">{order.id} · {order.buyer}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge className="bg-primary/10 text-primary border-0">{order.status}</Badge>
+                      <span className="text-muted-foreground text-xs">{order.updated}</span>
+                      <Button size="sm" variant="outline" className="border-border text-xs">Update</Button>
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="shipping" className="mt-4 space-y-3">
+                {orderPipeline.map((order) => (
+                  <div key={`${order.id}-ship`} className="flex items-center justify-between p-3 rounded-lg border border-border bg-background">
+                    <div>
+                      <p className="text-foreground text-sm">{order.item}</p>
+                      <p className="text-muted-foreground text-xs">{order.id} · {order.status}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" variant="ghost" className="text-primary text-xs">Mark Processing</Button>
+                      <Button size="sm" variant="ghost" className="text-primary text-xs">Mark Shipping</Button>
+                      <Button size="sm" className="bg-primary text-white text-xs">Complete</Button>
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+            </Tabs>
+          </Card>
+
+          <Card className="p-6 border-border bg-card space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-muted-foreground text-sm">YC-SEL-05 · YC-SEL-06 · YC-SEL-07</p>
+                <h3 className="text-foreground">Promos & Wallet</h3>
+              </div>
+              <Badge className="bg-primary/15 text-primary border-0">Wallet</Badge>
+            </div>
+
+            <div className="p-4 rounded-lg border border-border bg-background">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Wallet className="w-4 h-4" />
+                  <span>Available balance</span>
+                </div>
+                <Badge className="bg-primary/10 text-primary border-0">${withdrawAmount} ready</Badge>
+              </div>
+              <p className="text-foreground text-2xl mb-3">$2,640</p>
+              <div className="grid grid-cols-3 gap-3 text-xs">
+                <div className="p-2 rounded-lg border border-border bg-card">
+                  <p className="text-muted-foreground">Total sales</p>
+                  <p className="text-foreground text-sm">$12,890</p>
+                </div>
+                <div className="p-2 rounded-lg border border-border bg-card">
+                  <p className="text-muted-foreground">Pending payout</p>
+                  <p className="text-foreground text-sm">$540</p>
+                </div>
+                <div className="p-2 rounded-lg border border-border bg-card">
+                  <p className="text-muted-foreground">Refunds</p>
+                  <p className="text-foreground text-sm">$120</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 mt-3">
+                <Input
+                  type="number"
+                  value={withdrawAmount}
+                  onChange={(e) => setWithdrawAmount(Number(e.target.value))}
+                  className="bg-background border-border h-10 text-sm"
+                  placeholder="Amount"
+                />
+                <Button className="bg-primary text-white h-10">
+                  <ArrowDownToLine className="w-4 h-4 mr-2" />
+                  Withdraw
+                </Button>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-foreground text-sm mb-3">Promotions</h4>
+              <div className="space-y-3">
+                {promotionRules.map((promo) => (
+                  <div key={promo.id} className="p-3 rounded-lg border border-border bg-background flex items-center justify-between">
+                    <div>
+                      <p className="text-foreground text-sm">{promo.name}</p>
+                      <p className="text-muted-foreground text-xs">{promo.window} · {promo.appliedTo}</p>
+                    </div>
+                    <Badge className="bg-primary/10 text-primary border-0">{promo.status}</Badge>
+                  </div>
+                ))}
+                <Button variant="outline" className="w-full border-dashed border-border text-sm">Create promo rule</Button>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-foreground text-sm mb-3">Wallet history</h4>
+              <div className="space-y-2 text-sm">
+                {walletHistory.map((entry) => (
+                  <div key={entry.id} className="flex items-center justify-between p-2 rounded-lg border border-border bg-background">
+                    <div>
+                      <p className="text-foreground">{entry.type}</p>
+                      <p className="text-muted-foreground text-xs">{entry.id} · {entry.date}</p>
+                    </div>
+                    <Badge className={`border-0 ${entry.amount > 0 ? "bg-primary/10 text-primary" : "bg-green-500/10 text-green-700"}`}>
+                      {entry.amount > 0 ? `+$${entry.amount}` : `-$${Math.abs(entry.amount)}`}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Client order visibility */}
+        <Card className="mt-10 p-6 border-border bg-card">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-muted-foreground text-sm">PT booking commerce</p>
+              <h3 className="text-foreground">Client Orders & Sign-ups</h3>
+            </div>
+            <Badge className="border-0 bg-primary/10 text-primary">
+              <ShieldCheck className="w-3 h-3 mr-1" />
+              Protected payouts
+            </Badge>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border">
+                <TableHead className="text-muted-foreground">Order</TableHead>
+                <TableHead className="text-muted-foreground">Member</TableHead>
+                <TableHead className="text-muted-foreground">Plan</TableHead>
+                <TableHead className="text-muted-foreground">Date</TableHead>
+                <TableHead className="text-muted-foreground">Status</TableHead>
+                <TableHead className="text-muted-foreground text-right">Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {registrationOrders.map((order) => (
+                <TableRow key={order.id} className="border-border">
+                  <TableCell className="text-foreground font-medium">{order.id}</TableCell>
+                  <TableCell className="text-muted-foreground">{order.member}</TableCell>
+                  <TableCell className="text-foreground">{order.plan}</TableCell>
+                  <TableCell className="text-muted-foreground">{order.date}</TableCell>
+                  <TableCell>
+                    <Badge className={`${statusTone(order.status)} border-0 capitalize`}>{order.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-foreground">{order.total}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <div className="grid grid-cols-3 gap-4 mt-4 text-sm">
+            <div className="p-4 rounded-xl border border-border bg-background">
+              <p className="text-muted-foreground mb-1">Processing</p>
+              <p className="text-foreground text-xl">02</p>
+              <p className="text-muted-foreground text-xs">Approve or cancel pending slots</p>
+            </div>
+            <div className="p-4 rounded-xl border border-border bg-background">
+              <p className="text-muted-foreground mb-1">Active Programs</p>
+              <p className="text-foreground text-xl">18</p>
+              <p className="text-muted-foreground text-xs">Manage check-ins and milestones</p>
+            </div>
+            <div className="p-4 rounded-xl border border-border bg-background">
+              <p className="text-muted-foreground mb-1">Refund / Cancel</p>
+              <p className="text-foreground text-xl">03</p>
+              <p className="text-muted-foreground text-xs">Track withdrawals back to clients</p>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );

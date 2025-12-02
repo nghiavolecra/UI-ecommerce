@@ -1,4 +1,4 @@
-import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, Truck, CheckCircle, RotateCcw, Eye, Package } from "lucide-react";
+import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, Truck, CheckCircle, RotateCcw, Eye, Package, CreditCard, ShieldCheck, Ban, Clock3, Banknote } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Separator } from "./ui/separator";
@@ -72,6 +72,48 @@ export function DesktopCart({ onBack, onCheckout }: DesktopCartProps) {
 
   // Order data from My Orders
   const orders = {
+    processing: [
+      {
+        id: "ORD-2024-1235",
+        date: "Nov 2, 2024",
+        status: "Processing",
+        estimatedDelivery: "Nov 10, 2024",
+        items: [
+          {
+            name: "Protein Powder - Chocolate",
+            quantity: 1,
+            price: 39.99,
+            image: "https://images.unsplash.com/photo-1709976142411-26dfc86b13fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxneW0lMjBzdXBwbGVtZW50cyUyMG51dHJpdGlvbnxlbnwxfHx8fDE3NjIyNTQ2ODh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+          },
+        ],
+        total: 39.99,
+        trackingNumber: null,
+        cancellable: true,
+      },
+      {
+        id: "ORD-2024-1236",
+        date: "Nov 3, 2024",
+        status: "Processing",
+        estimatedDelivery: "Nov 12, 2024",
+        items: [
+          {
+            name: "Performance Tank Top",
+            quantity: 1,
+            price: 34.99,
+            image: "https://images.unsplash.com/photo-1558151507-c1aa3d917dbb?w=300",
+          },
+          {
+            name: "Yoga Mat - Premium",
+            quantity: 1,
+            price: 29.99,
+            image: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=800&q=80",
+          },
+        ],
+        total: 64.98,
+        trackingNumber: "TRK5234992",
+        cancellable: false,
+      },
+    ],
     inTransit: [
       {
         id: "ORD-2024-1234",
@@ -88,22 +130,6 @@ export function DesktopCart({ onBack, onCheckout }: DesktopCartProps) {
         ],
         total: 99.98,
         trackingNumber: "TRK123456789",
-      },
-      {
-        id: "ORD-2024-1235",
-        date: "Nov 2, 2024",
-        status: "Processing",
-        estimatedDelivery: "Nov 10, 2024",
-        items: [
-          {
-            name: "Protein Powder - Chocolate",
-            quantity: 1,
-            price: 39.99,
-            image: "https://images.unsplash.com/photo-1709976142411-26dfc86b13fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxneW0lMjBzdXBwbGVtZW50cyUyMG51dHJpdGlvbnxlbnwxfHx8fDE3NjIyNTQ2ODh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-          },
-        ],
-        total: 39.99,
-        trackingNumber: null,
       },
     ],
     delivered: [
@@ -188,6 +214,20 @@ export function DesktopCart({ onBack, onCheckout }: DesktopCartProps) {
             >
               <ShoppingBag className="w-4 h-4" />
               Shopping Cart ({cartItems.length})
+            </TabsTrigger>
+            <TabsTrigger
+              value="checkout"
+              className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary gap-2"
+            >
+              <CreditCard className="w-4 h-4" />
+              Checkout
+            </TabsTrigger>
+            <TabsTrigger
+              value="processing"
+              className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary gap-2"
+            >
+              <Clock3 className="w-4 h-4" />
+              Processing ({orders.processing.length})
             </TabsTrigger>
             <TabsTrigger
               value="in-transit"
@@ -362,6 +402,163 @@ export function DesktopCart({ onBack, onCheckout }: DesktopCartProps) {
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          {/* Checkout flow */}
+          <TabsContent value="checkout">
+            <div className="grid grid-cols-3 gap-6">
+              <Card className="col-span-2 rounded-[20px] border-border p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-foreground">Secure Checkout</h3>
+                    <p className="text-muted-foreground text-sm">Review shipping, payment, and promo details</p>
+                  </div>
+                  <Badge className="bg-primary/10 text-primary border-0">SSL Protected</Badge>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div className="p-3 rounded-xl border border-border bg-background">
+                    <p className="text-muted-foreground">Step 1</p>
+                    <p className="text-foreground font-medium">Cart</p>
+                  </div>
+                  <div className="p-3 rounded-xl border-2 border-primary bg-primary/5">
+                    <p className="text-primary">Step 2</p>
+                    <p className="text-foreground font-medium">Checkout</p>
+                  </div>
+                  <div className="p-3 rounded-xl border border-border bg-background">
+                    <p className="text-muted-foreground">Step 3</p>
+                    <p className="text-foreground font-medium">Order placed</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl border border-border bg-background space-y-2">
+                    <h4 className="text-foreground flex items-center gap-2">
+                      <Package className="w-4 h-4" /> Shipping Address
+                    </h4>
+                    <p className="text-muted-foreground text-sm">John Anderson · 123 Market St, San Francisco, CA</p>
+                    <Button variant="outline" size="sm" className="w-fit">Change</Button>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-background space-y-2">
+                    <h4 className="text-foreground flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" /> Payment Method
+                    </h4>
+                    <p className="text-muted-foreground text-sm">VISA •••• 2431 · Exp 08/26</p>
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-primary" />
+                      <span className="text-xs text-muted-foreground">Payment will only capture after confirmation.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl border border-dashed border-border bg-secondary">
+                  <div className="flex justify-between items-center mb-2">
+                    <div>
+                      <p className="text-foreground">Estimated total</p>
+                      <p className="text-muted-foreground text-sm">Including taxes and delivery</p>
+                    </div>
+                    <p className="text-foreground text-2xl">${total.toFixed(2)}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button className="bg-primary text-white" onClick={onCheckout}>
+                      Pay & place order
+                    </Button>
+                    <Button variant="outline" className="flex-1">
+                      Save for later
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="rounded-[20px] border-border p-6 space-y-4">
+                <h3 className="text-foreground">Order snapshot</h3>
+                {cartItems.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between text-sm">
+                    <div>
+                      <p className="text-foreground">{item.name}</p>
+                      <p className="text-muted-foreground">Qty {item.quantity}</p>
+                    </div>
+                    <p className="text-foreground">${(item.price * item.quantity).toFixed(2)}</p>
+                  </div>
+                ))}
+                <Separator />
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Refund policy</span>
+                  <span className="text-foreground flex items-center gap-1">
+                    <Banknote className="w-4 h-4" /> Instant to wallet
+                  </span>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Processing Orders */}
+          <TabsContent value="processing" className="space-y-4">
+            {orders.processing.map((order) => (
+              <Card key={order.id} className="rounded-[20px] border-border p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-foreground mb-1">Order {order.id}</h3>
+                    <p className="text-muted-foreground text-sm">Placed on {order.date}</p>
+                  </div>
+                  <Badge className="bg-yellow-500/15 text-yellow-700">
+                    {order.status}
+                  </Badge>
+                </div>
+
+                <div className="space-y-3 mb-4">
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="flex gap-4">
+                      <div className="w-20 h-20 rounded-[12px] overflow-hidden bg-secondary flex-shrink-0">
+                        <ImageWithFallback
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-foreground">{item.name}</h4>
+                        <p className="text-muted-foreground text-sm">Quantity: {item.quantity}</p>
+                        <p className="text-foreground">${item.price}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-between items-center pt-4 border-t border-border">
+                  <div>
+                    <p className="text-muted-foreground text-sm">Estimated Delivery</p>
+                    <p className="text-foreground">{order.estimatedDelivery}</p>
+                    {order.trackingNumber && (
+                      <p className="text-muted-foreground text-xs mt-1">
+                        Tracking: {order.trackingNumber}
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-muted-foreground text-sm">Total</p>
+                    <p className="text-foreground text-xl">${order.total.toFixed(2)}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 mt-4">
+                  {order.cancellable ? (
+                    <Button variant="outline" className="flex-1" size="sm">
+                      <Ban className="w-4 h-4 mr-2" />
+                      Cancel & refund
+                    </Button>
+                  ) : (
+                    <Badge className="bg-green-500/15 text-green-700 border-0 flex-1 justify-center">
+                      <ShieldCheck className="w-4 h-4 mr-2" />
+                      Payment captured
+                    </Badge>
+                  )}
+                  <Button className="flex-1 bg-primary text-white" size="sm">
+                    Continue to pay
+                  </Button>
+                </div>
+              </Card>
+            ))}
           </TabsContent>
 
           {/* In Transit Orders */}
