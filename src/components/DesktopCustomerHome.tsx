@@ -23,6 +23,7 @@ const trainers = [
     serviceType: "1:1 Coaching",
     popularity: 98,
     createdAt: "2024-07-01",
+    salePercent: 15,
   },
   {
     id: 2,
@@ -53,6 +54,7 @@ const trainers = [
     serviceType: "Cardio",
     popularity: 86,
     createdAt: "2024-05-20",
+    salePercent: 20,
   },
   {
     id: 4,
@@ -68,6 +70,7 @@ const trainers = [
     serviceType: "Yoga",
     popularity: 94,
     createdAt: "2024-07-12",
+    salePercent: 20,
   },
   {
     id: 5,
@@ -98,6 +101,7 @@ const trainers = [
     serviceType: "Nutrition",
     popularity: 89,
     createdAt: "2024-08-01",
+    salePercent: 10,
   }
 ];
 
@@ -116,6 +120,7 @@ const businesses = [
     serviceType: "Retail",
     popularity: 95,
     createdAt: "2024-07-18",
+    salePercent: 20,
   },
   {
     id: 102,
@@ -146,6 +151,7 @@ const businesses = [
     serviceType: "Group Training",
     popularity: 97,
     createdAt: "2024-08-05",
+    salePercent: 15,
   }
 ];
 
@@ -157,7 +163,8 @@ const featuredProducts = [
     name: "Premium Whey Protein",
     price: 49.99,
     image: "https://images.unsplash.com/photo-1709976142774-ce1ef41a8378?w=300",
-    rating: 4.8
+    rating: 4.8,
+    salePercent: 20,
   },
   {
     id: 2,
@@ -171,7 +178,8 @@ const featuredProducts = [
     name: "Performance Tank Top",
     price: 34.99,
     image: "https://images.unsplash.com/photo-1558151507-c1aa3d917dbb?w=300",
-    rating: 4.7
+    rating: 4.7,
+    salePercent: 15,
   }
 ];
 
@@ -226,6 +234,14 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
       }
     });
   }, [filters.location, filters.price, filters.rating, filters.serviceType, selectedCategory, sortBy, viewTab]);
+
+  const handleListingClick = (listingType: ListingType, listingId: number) => {
+    if (listingType === "pt") {
+      onTrainerSelect(listingId);
+    } else {
+      onMarketplaceClick();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -414,7 +430,7 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
             <Card
               key={`${listing.type}-${listing.id}`}
               className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border-border bg-card group"
-              onClick={() => listing.type === "pt" && onTrainerSelect(listing.id)}
+              onClick={() => handleListingClick(listing.type, listing.id)}
             >
               <div className="relative h-48">
                 <ImageWithFallback
@@ -422,6 +438,11 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                   alt={listing.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+                {listing.salePercent && (
+                  <div className="absolute top-3 left-3">
+                    <Badge className="bg-orange-500 text-white shadow-md">-{listing.salePercent}%</Badge>
+                  </div>
+                )}
                 {listing.verified && (
                   <div className="absolute top-3 right-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-lg">
                     <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -458,12 +479,28 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                       <Briefcase className="w-4 h-4" />
                       <span>{listing.serviceType}</span>
                     </div>
-                    <div>
-                      <span className="text-primary text-lg">${listing.price}</span>
+                    <div className="flex items-center gap-2">
+                      {listing.salePercent ? (
+                        <>
+                          <span className="text-primary text-lg font-semibold">
+                            ${Math.round(listing.price * (1 - listing.salePercent / 100))}
+                          </span>
+                          <span className="text-muted-foreground text-sm line-through">${listing.price}</span>
+                        </>
+                      ) : (
+                        <span className="text-primary text-lg">${listing.price}</span>
+                      )}
                       <span className="text-muted-foreground text-sm">/service</span>
                     </div>
                   </div>
-                  <Button size="sm" className="bg-primary text-white">
+                  <Button
+                    size="sm"
+                    className="bg-primary text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleListingClick(listing.type, listing.id);
+                    }}
+                  >
                     {listing.type === "pt" ? "Book Now" : "View Catalog"}
                   </Button>
                 </div>
@@ -484,12 +521,23 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
 
           <div className="grid grid-cols-3 gap-6">
             {featuredProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border-border bg-card group">
-                <ImageWithFallback
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+              <Card
+                key={product.id}
+                className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border-border bg-card group"
+                onClick={onMarketplaceClick}
+              >
+                <div className="relative h-48">
+                  <ImageWithFallback
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {product.salePercent && (
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-orange-500 text-white shadow-md">-{product.salePercent}%</Badge>
+                    </div>
+                  )}
+                </div>
                 <div className="p-4">
                   <h3 className="text-foreground mb-2">{product.name}</h3>
                   <div className="flex items-center justify-between">
@@ -497,7 +545,18 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                       <Star className="w-4 h-4 fill-primary text-primary" />
                       <span className="text-foreground text-sm">{product.rating}</span>
                     </div>
-                    <span className="text-primary">${product.price}</span>
+                    <div className="flex items-center gap-2">
+                      {product.salePercent ? (
+                        <>
+                          <span className="text-primary font-semibold">
+                            ${(product.price * (1 - product.salePercent / 100)).toFixed(2)}
+                          </span>
+                          <span className="text-muted-foreground text-sm line-through">${product.price}</span>
+                        </>
+                      ) : (
+                        <span className="text-primary">${product.price}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Card>
