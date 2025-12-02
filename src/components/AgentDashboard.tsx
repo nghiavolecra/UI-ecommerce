@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package, TrendingUp, DollarSign, Truck, Plus, MoreVertical } from "lucide-react";
+import { Package, TrendingUp, DollarSign, Truck, Plus, MoreVertical, RefreshCcw, CheckCircle, RotateCcw } from "lucide-react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -24,6 +24,11 @@ const orders = [
   { id: 4, product: "Yoga Mat Premium", customer: "Emma W.", status: "pending", amount: 59.99, date: "Nov 14" }
 ];
 
+const returnRequests = [
+  { id: "RET-231", product: "Compression Shorts", reason: "Size exchange", status: "pending", amount: 34.99 },
+  { id: "RET-226", product: "Performance Tank Top", reason: "Damaged seam", status: "approved", amount: 34.99 },
+];
+
 const stats = {
   totalRevenue: 18750,
   activeProducts: 4,
@@ -34,11 +39,17 @@ const stats = {
 export function AgentDashboard() {
   const [showAddProduct, setShowAddProduct] = useState(false);
 
+  const pendingOrders = orders.filter((order) => order.status === "pending").length;
+  const shippedOrders = orders.filter((order) => order.status === "shipped").length;
+  const deliveredOrders = orders.filter((order) => order.status === "delivered").length;
+  const openReturns = returnRequests.filter((request) => request.status !== "resolved").length;
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending": return "bg-yellow-500/20 text-yellow-500";
       case "shipped": return "bg-blue-500/20 text-blue-500";
       case "delivered": return "bg-primary/20 text-primary";
+      case "approved": return "bg-green-500/20 text-green-600";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -234,6 +245,53 @@ export function AgentDashboard() {
               </Select>
             </div>
 
+            <div className="grid grid-cols-4 gap-4">
+              <Card className="p-4 bg-card border-border rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500/15 flex items-center justify-center">
+                    <RefreshCcw className="w-5 h-5 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm">Processing</p>
+                    <p className="text-white text-lg">{pendingOrders}</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-4 bg-card border-border rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center">
+                    <Truck className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm">Shipping</p>
+                    <p className="text-white text-lg">{shippedOrders}</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-4 bg-card border-border rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-green-500/15 flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm">Delivered</p>
+                    <p className="text-white text-lg">{deliveredOrders}</p>
+                  </div>
+                </div>
+              </Card>
+              <Card className="p-4 bg-card border-border rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+                    <RotateCcw className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm">Returns / Refunds</p>
+                    <p className="text-white text-lg">{openReturns}</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
             {orders.map((order) => (
               <Card key={order.id} className="p-4 bg-card border-border rounded-2xl">
                 <div className="flex items-center justify-between mb-3">
@@ -263,6 +321,36 @@ export function AgentDashboard() {
                 )}
               </Card>
             ))}
+
+            <Card className="p-4 bg-card border-border rounded-2xl">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-white">Return Center</h3>
+                  <p className="text-muted-foreground text-sm">Track exchanges and refund amounts</p>
+                </div>
+                <Badge className="bg-primary/20 text-primary border-0">Live</Badge>
+              </div>
+
+              <div className="space-y-3">
+                {returnRequests.map((request) => (
+                  <div key={request.id} className="p-3 rounded-xl border border-border bg-background">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white text-sm">{request.product}</p>
+                        <p className="text-muted-foreground text-xs">{request.id} · {request.reason}</p>
+                      </div>
+                      <Badge className={`${getStatusColor(request.status)} border-0 capitalize`}>
+                        {request.status}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between mt-2 text-sm">
+                      <span className="text-muted-foreground">Refund</span>
+                      <span className="text-primary font-semibold">${request.amount}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
