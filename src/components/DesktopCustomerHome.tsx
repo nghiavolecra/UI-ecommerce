@@ -4,7 +4,17 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+
+type ListingType = "pt" | "business";
+
+type ListingType = "pt" | "business";
 
 type ListingType = "pt" | "business";
 
@@ -171,7 +181,7 @@ const featuredProducts = [
     name: "Adjustable Dumbbells",
     price: 299.99,
     image: "https://images.unsplash.com/photo-1652492041264-efba848755d6?w=300",
-    rating: 4.9
+    rating: 4.9,
   },
   {
     id: 3,
@@ -188,9 +198,13 @@ interface DesktopCustomerHomeProps {
   onMarketplaceClick: () => void;
 }
 
-export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: DesktopCustomerHomeProps) {
+export function DesktopCustomerHome({
+  onTrainerSelect,
+  onMarketplaceClick,
+}: DesktopCustomerHomeProps) {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [viewTab, setViewTab] = useState<"all" | "trainers" | "businesses">("all");
+  const [viewTab, setViewTab] =
+    useState<"all" | "trainers" | "businesses">("all");
   const [sortBy, setSortBy] = useState("rating");
   const [filters, setFilters] = useState({
     location: "all",
@@ -199,6 +213,9 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
     serviceType: "all",
   });
 
+  /* ===========================
+     FILTER + SORT COMBINED LISTINGS
+  =========================== */
   const combinedListings = useMemo(() => {
     const allListings = [...trainers, ...businesses];
 
@@ -206,13 +223,35 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
       if (viewTab === "trainers" && listing.type !== "pt") return false;
       if (viewTab === "businesses" && listing.type !== "business") return false;
 
-      const matchesCategory = selectedCategory === "All" || listing.specialty.includes(selectedCategory) || listing.serviceType?.includes(selectedCategory);
-      const matchesLocation = filters.location === "all" || listing.location.toLowerCase().includes(filters.location.toLowerCase());
-      const matchesRating = filters.rating === "all" || listing.rating >= Number(filters.rating);
-      const matchesService = filters.serviceType === "all" || listing.serviceType === filters.serviceType;
-      const matchesPrice = filters.price === "all" || (filters.price === "under50" ? listing.price <= 50 : listing.price > 50);
+      const matchesCategory =
+        selectedCategory === "All" ||
+        listing.specialty.includes(selectedCategory) ||
+        listing.serviceType?.includes(selectedCategory);
 
-      return matchesCategory && matchesLocation && matchesRating && matchesService && matchesPrice;
+      const matchesLocation =
+        filters.location === "all" ||
+        listing.location.toLowerCase().includes(filters.location.toLowerCase());
+
+      const matchesRating =
+        filters.rating === "all" || listing.rating >= Number(filters.rating);
+
+      const matchesService =
+        filters.serviceType === "all" ||
+        listing.serviceType === filters.serviceType;
+
+      const matchesPrice =
+        filters.price === "all" ||
+        (filters.price === "under50"
+          ? listing.price <= 50
+          : listing.price > 50);
+
+      return (
+        matchesCategory &&
+        matchesLocation &&
+        matchesRating &&
+        matchesService &&
+        matchesPrice
+      );
     });
 
     return filtered.sort((a, b) => {
@@ -226,15 +265,29 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
         case "popularity":
           return b.popularity - a.popularity;
         case "newest":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() -
+            new Date(a.createdAt).getTime()
+          );
         case "type":
           return a.type.localeCompare(b.type);
         default:
           return 0;
       }
     });
-  }, [filters.location, filters.price, filters.rating, filters.serviceType, selectedCategory, sortBy, viewTab]);
+  }, [
+    filters.location,
+    filters.price,
+    filters.rating,
+    filters.serviceType,
+    selectedCategory,
+    sortBy,
+    viewTab,
+  ]);
 
+  /* ===========================
+     CLICK HANDLER
+  =========================== */
   const handleListingClick = (listingType: ListingType, listingId: number) => {
     if (listingType === "pt") {
       onTrainerSelect(listingId);
@@ -243,6 +296,9 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
     }
   };
 
+  /* ===========================
+     RETURN UI
+  =========================== */
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -256,6 +312,8 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
               <p className="text-muted-foreground text-lg mb-8">
                 Connect with elite personal trainers and access premium gym equipment. Start your transformation today.
               </p>
+
+              {/* Hero Buttons */}
               <div className="flex gap-4">
                 <Button className="bg-primary text-white h-12 px-8" onClick={() => setViewTab("trainers")}>
                   <Dumbbell className="w-5 h-5 mr-2" />
@@ -275,6 +333,7 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                   </div>
                   <p className="text-muted-foreground text-sm">Active Trainers</p>
                 </div>
+
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-primary text-3xl">12K+</div>
@@ -282,6 +341,7 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                   </div>
                   <p className="text-muted-foreground text-sm">Happy Clients</p>
                 </div>
+
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-primary text-3xl">4.9</div>
@@ -303,12 +363,16 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* ============================= MAIN CONTENT =============================== */}
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Filters and Categories */}
+
+        {/* FILTER AREA */}
         <div className="space-y-4 mb-8">
+
+          {/* Tabs: All / Trainers / Businesses */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+
               <Button
                 variant={viewTab === "all" ? "default" : "outline"}
                 className="rounded-full border-border"
@@ -317,6 +381,7 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                 <Compass className="w-4 h-4 mr-2" />
                 All Listings
               </Button>
+
               <Button
                 variant={viewTab === "trainers" ? "default" : "outline"}
                 className="rounded-full border-border"
@@ -325,6 +390,7 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                 <Dumbbell className="w-4 h-4 mr-2" />
                 Personal Trainers
               </Button>
+
               <Button
                 variant={viewTab === "businesses" ? "default" : "outline"}
                 className="rounded-full border-border"
@@ -333,61 +399,86 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
                 <Building2 className="w-4 h-4 mr-2" />
                 Businesses
               </Button>
+
             </div>
 
+            {/* Sort Dropdown */}
             <div className="flex items-center gap-3">
+
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-48 bg-background border-border">
                   <SelectValue />
                 </SelectTrigger>
+
                 <SelectContent>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="price-low">Price: Low → High</SelectItem>
+                  <SelectItem value="price-high">Price: High → Low</SelectItem>
                   <SelectItem value="rating">Rating</SelectItem>
                   <SelectItem value="popularity">Popularity</SelectItem>
-                  <SelectItem value="newest">Newest Services</SelectItem>
-                  <SelectItem value="type">PT vs Business</SelectItem>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="type">Type (PT vs Business)</SelectItem>
                 </SelectContent>
               </Select>
+
               <Button variant="outline" size="icon" className="border-border">
                 <Filter className="w-4 h-4" />
               </Button>
             </div>
           </div>
 
+          {/* Category Buttons */}
           <div className="grid grid-cols-5 gap-3">
             {categories.map((category) => (
               <Button
                 key={category}
                 variant={selectedCategory === category ? "default" : "outline"}
                 onClick={() => setSelectedCategory(category)}
-                className={`w-full ${selectedCategory === category ? "bg-primary text-white" : "border-border"}`}
                 size="sm"
+                className={`w-full ${selectedCategory === category
+                    ? "bg-primary text-white"
+                    : "border-border"
+                  }`}
               >
                 {category}
               </Button>
             ))}
           </div>
 
+          {/* Filter Rows */}
           <div className="grid grid-cols-4 gap-3">
-            <Select value={filters.location} onValueChange={(value) => setFilters(prev => ({ ...prev, location: value }))}>
+
+            {/* Location */}
+            <Select
+              value={filters.location}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, location: value }))
+              }
+            >
               <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Location" />
               </SelectTrigger>
+
               <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 <SelectItem value="New York">New York</SelectItem>
                 <SelectItem value="Los Angeles">Los Angeles</SelectItem>
                 <SelectItem value="Chicago">Chicago</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select value={filters.serviceType} onValueChange={(value) => setFilters(prev => ({ ...prev, serviceType: value }))}>
+            {/* Service type */}
+            <Select
+              value={filters.serviceType}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, serviceType: value }))
+              }
+            >
               <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Service Type" />
               </SelectTrigger>
+
               <SelectContent>
-                <SelectItem value="all">All Services</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 <SelectItem value="1:1 Coaching">1:1 Coaching</SelectItem>
                 <SelectItem value="CrossFit">CrossFit</SelectItem>
                 <SelectItem value="Cardio">Cardio</SelectItem>
@@ -400,10 +491,17 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
               </SelectContent>
             </Select>
 
-            <Select value={filters.price} onValueChange={(value) => setFilters(prev => ({ ...prev, price: value }))}>
+            {/* Price */}
+            <Select
+              value={filters.price}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, price: value }))
+              }
+            >
               <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Price" />
               </SelectTrigger>
+
               <SelectContent>
                 <SelectItem value="all">All Prices</SelectItem>
                 <SelectItem value="under50">Under $50</SelectItem>
@@ -411,158 +509,224 @@ export function DesktopCustomerHome({ onTrainerSelect, onMarketplaceClick }: Des
               </SelectContent>
             </Select>
 
-            <Select value={filters.rating} onValueChange={(value) => setFilters(prev => ({ ...prev, rating: value }))}>
+            {/* Rating */}
+            <Select
+              value={filters.rating}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, rating: value }))
+              }
+            >
               <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Rating" />
               </SelectTrigger>
+
               <SelectContent>
-                <SelectItem value="all">Any Rating</SelectItem>
-                <SelectItem value="4.5">4.5 & up</SelectItem>
-                <SelectItem value="4.8">4.8 & up</SelectItem>
+                <SelectItem value="all">All Ratings</SelectItem>
+                <SelectItem value="4.5">4.5+</SelectItem>
+                <SelectItem value="4.8">4.8+</SelectItem>
               </SelectContent>
             </Select>
+
           </div>
         </div>
 
-        {/* Listings Grid */}
+        {/* ============================= LISTINGS GRID ============================= */}
         <div className="grid grid-cols-3 gap-6 mb-16">
-          {combinedListings.map((listing) => (
-            <Card
-              key={`${listing.type}-${listing.id}`}
-              className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border-border bg-card group"
-              onClick={() => handleListingClick(listing.type, listing.id)}
-            >
-              <div className="relative h-48">
-                <ImageWithFallback
-                  src={listing.image}
-                  alt={listing.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                {listing.salePercent && (
-                  <div className="absolute top-3 left-3">
-                    <Badge className="bg-orange-500 text-white shadow-md">-{listing.salePercent}%</Badge>
-                  </div>
-                )}
-                {listing.verified && (
-                  <div className="absolute top-3 right-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-lg">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
+          {combinedListings.map((listing) => {
+            const discounted =
+              listing.salePercent &&
+              Math.round(listing.price * (1 - listing.salePercent / 100));
 
-              <div className="p-5">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="text-foreground">{listing.name}</h3>
-                  <Badge variant="outline" className="border-border">
-                    {listing.type === "pt" ? "PT" : "Business"}
-                  </Badge>
-                </div>
-                <p className="text-muted-foreground text-sm mb-3">{listing.specialty}</p>
+            return (
+              <Card
+                key={`${listing.type}-${listing.id}`}
+                className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border-border bg-card group"
+                onClick={() => handleListingClick(listing.type, listing.id)}
+              >
+                {/* IMAGE */}
+                <div className="relative h-48">
+                  <ImageWithFallback
+                    src={listing.image}
+                    alt={listing.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
 
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="text-foreground text-sm">{listing.rating}</span>
-                    <span className="text-muted-foreground text-sm">({listing.reviews})</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                    <MapPin className="w-3 h-3" />
-                    <span>{listing.location}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                      <Briefcase className="w-4 h-4" />
-                      <span>{listing.serviceType}</span>
+                  {/* SALE BADGE */}
+                  {listing.salePercent && (
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-orange-500 text-white shadow-md">
+                        -{listing.salePercent}%
+                      </Badge>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {listing.salePercent ? (
-                        <>
-                          <span className="text-primary text-lg font-semibold">
-                            ${Math.round(listing.price * (1 - listing.salePercent / 100))}
+                  )}
+
+                  {/* VERIFIED BADGE */}
+                  {listing.verified && (
+                    <div className="absolute top-3 right-3 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+
+                {/* CONTENT */}
+                <div className="p-5">
+
+                  {/* Name + Type */}
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="text-foreground">{listing.name}</h3>
+                    <Badge variant="outline" className="border-border">
+                      {listing.type === "pt" ? "PT" : "Business"}
+                    </Badge>
+                  </div>
+
+                  <p className="text-muted-foreground text-sm mb-3">
+                    {listing.specialty}
+                  </p>
+
+                  {/* Rating + Location */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-primary text-primary" />
+                      <span className="text-foreground text-sm">
+                        {listing.rating}
+                      </span>
+                      <span className="text-muted-foreground text-sm">
+                        ({listing.reviews})
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                      <MapPin className="w-3 h-3" />
+                      <span>{listing.location}</span>
+                    </div>
+                  </div>
+
+                  {/* PRICE SECTION */}
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
+
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                        <Briefcase className="w-4 h-4" />
+                        <span>{listing.serviceType}</span>
+                      </div>
+
+                      {/* PRICE */}
+                      <div className="flex items-center gap-2">
+                        {listing.salePercent ? (
+                          <>
+                            <span className="text-primary text-lg font-semibold">
+                              ${discounted}
+                            </span>
+                            <span className="line-through text-sm text-muted-foreground">
+                              ${listing.price}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-primary text-lg">
+                            ${listing.price}
                           </span>
-                          <span className="text-muted-foreground text-sm line-through">${listing.price}</span>
-                        </>
-                      ) : (
-                        <span className="text-primary text-lg">${listing.price}</span>
-                      )}
-                      <span className="text-muted-foreground text-sm">/service</span>
+                        )}
+                        <span className="text-muted-foreground text-sm">
+                          /service
+                        </span>
+                      </div>
                     </div>
+
+                    <Button
+                      size="sm"
+                      className="bg-primary text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleListingClick(listing.type, listing.id);
+                      }}
+                    >
+                      {listing.type === "pt" ? "Book Now" : "View Catalog"}
+                    </Button>
+
                   </div>
-                  <Button
-                    size="sm"
-                    className="bg-primary text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleListingClick(listing.type, listing.id);
-                    }}
-                  >
-                    {listing.type === "pt" ? "Book Now" : "View Catalog"}
-                  </Button>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Featured Products */}
+        {/* ======================= FEATURED PRODUCTS ======================= */}
         <div className="border-t border-border pt-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-foreground">Featured Products</h2>
-            <Button variant="ghost" onClick={onMarketplaceClick} className="text-primary">
+            <Button variant="ghost" className="text-primary" onClick={onMarketplaceClick}>
               View All
               <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
 
           <div className="grid grid-cols-3 gap-6">
-            {featuredProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border-border bg-card group"
-                onClick={onMarketplaceClick}
-              >
-                <div className="relative h-48">
-                  <ImageWithFallback
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  {product.salePercent && (
-                    <div className="absolute top-3 left-3">
-                      <Badge className="bg-orange-500 text-white shadow-md">-{product.salePercent}%</Badge>
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="text-foreground mb-2">{product.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-primary text-primary" />
-                      <span className="text-foreground text-sm">{product.rating}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {product.salePercent ? (
-                        <>
-                          <span className="text-primary font-semibold">
-                            ${(product.price * (1 - product.salePercent / 100)).toFixed(2)}
-                          </span>
-                          <span className="text-muted-foreground text-sm line-through">${product.price}</span>
-                        </>
-                      ) : (
-                        <span className="text-primary">${product.price}</span>
-                      )}
+            {featuredProducts.map((product) => {
+              const discounted =
+                product.salePercent &&
+                (product.price * (1 - product.salePercent / 100)).toFixed(2);
+
+              return (
+                <Card
+                  key={product.id}
+                  className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow border-border bg-card group"
+                  onClick={onMarketplaceClick}
+                >
+                  <div className="relative h-48">
+                    <ImageWithFallback
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+
+                    {product.salePercent && (
+                      <div className="absolute top-3 left-3">
+                        <Badge className="bg-orange-500 text-white shadow-md">
+                          -{product.salePercent}%
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className="text-foreground mb-2">{product.name}</h3>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-primary text-primary" />
+                        <span className="text-sm text-foreground">
+                          {product.rating}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {product.salePercent ? (
+                          <>
+                            <span className="text-primary font-semibold">
+                              ${discounted}
+                            </span>
+                            <span className="line-through text-sm text-muted-foreground">
+                              ${product.price}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-primary">${product.price}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         </div>
+
       </div>
     </div>
   );
