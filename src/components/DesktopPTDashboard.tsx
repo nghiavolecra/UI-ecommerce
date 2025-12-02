@@ -17,9 +17,10 @@ const upcomingSessions = [
   { id: 5, client: "Alex Chen", time: "7:00 AM", date: "Nov 16", type: "CrossFit", paid: true }
 ];
 
-const myProducts = [
-  { id: 1, name: "Premium Whey Protein", price: 49.99, stock: 24, sold: 156 },
-  { id: 2, name: "Pre-Workout Energy", price: 39.99, stock: 31, sold: 124 }
+const seedProducts = [
+  { id: 1, name: "Performance Tank", category: "Apparel", price: 48, stock: 35, sold: 210, description: "Quick-dry mesh with breathable panels." },
+  { id: 2, name: "Adjustable Dumbbells", category: "Equipment", price: 299, stock: 12, sold: 92, description: "2x22kg set with rapid dial adjusters." },
+  { id: 3, name: "Pre-workout Energy", category: "Supplements", price: 39, stock: 24, sold: 148, description: "Beta-alanine + electrolytes for HIIT days." },
 ];
 
 const stats = {
@@ -240,15 +241,14 @@ export function DesktopPTDashboard() {
             <Card className="p-6 border-border bg-card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-foreground">My Products</h3>
-                <Button size="sm" variant="ghost" className="text-primary">
-                  <Plus className="w-4 h-4" />
-                </Button>
+                <Badge className="bg-primary/10 text-primary border-0">Live</Badge>
               </div>
 
               <div className="space-y-3">
-                {myProducts.map((product) => (
+                {products.slice(0, 3).map((product) => (
                   <div key={product.id} className="p-4 border border-border rounded-lg bg-background">
-                    <h4 className="text-foreground text-sm mb-3">{product.name}</h4>
+                    <h4 className="text-foreground text-sm mb-1">{product.name}</h4>
+                    <p className="text-muted-foreground text-xs mb-3">{product.category}</p>
                     <div className="grid grid-cols-3 gap-2 text-xs">
                       <div>
                         <p className="text-muted-foreground mb-1">Price</p>
