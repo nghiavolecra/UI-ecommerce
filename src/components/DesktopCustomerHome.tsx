@@ -18,6 +18,8 @@ type ListingType = "pt" | "business";
 
 type ListingType = "pt" | "business";
 
+type ListingType = "pt" | "business";
+
 const trainers = [
   {
     id: 1,
