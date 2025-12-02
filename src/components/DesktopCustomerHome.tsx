@@ -1,16 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  MapPin,
-  Star,
-  Filter,
-  ChevronRight,
-  Dumbbell,
-  TrendingUp,
-  Briefcase,
-  Building2,
-  Compass,
-} from "lucide-react";
-
+import { MapPin, Star, Filter, ChevronRight, Dumbbell, TrendingUp, Briefcase, Building2, Compass } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -25,9 +14,8 @@ import {
 
 type ListingType = "pt" | "business";
 
-/* ===========================
-   TRAINERS
-=========================== */
+type ListingType = "pt" | "business";
+
 const trainers = [
   {
     id: 1,
@@ -56,7 +44,7 @@ const trainers = [
     image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400",
     verified: true,
     type: "pt" as ListingType,
-    serviceType: "CrossFit",
+    serviceType: "CrossFit", 
     popularity: 91,
     createdAt: "2024-06-15",
   },
@@ -122,12 +110,9 @@ const trainers = [
     popularity: 89,
     createdAt: "2024-08-01",
     salePercent: 10,
-  },
+  }
 ];
 
-/* ===========================
-   BUSINESSES
-=========================== */
 const businesses = [
   {
     id: 101,
@@ -175,24 +160,10 @@ const businesses = [
     popularity: 97,
     createdAt: "2024-08-05",
     salePercent: 15,
-  },
+  }
 ];
 
-/* ===========================
-   CATEGORIES + FEATURED
-=========================== */
-const categories = [
-  "All",
-  "Strength",
-  "CrossFit",
-  "HIIT",
-  "Yoga",
-  "Boxing",
-  "Nutrition",
-  "Equipment",
-  "Supplements",
-  "Retail",
-];
+const categories = ["All", "Strength", "CrossFit", "HIIT", "Yoga", "Boxing", "Nutrition", "Equipment", "Supplements", "Retail"];
 
 const featuredProducts = [
   {
@@ -217,7 +188,7 @@ const featuredProducts = [
     image: "https://images.unsplash.com/photo-1558151507-c1aa3d917dbb?w=300",
     rating: 4.7,
     salePercent: 15,
-  },
+  }
 ];
 
 interface DesktopCustomerHomeProps {
