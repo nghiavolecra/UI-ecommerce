@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DollarSign, Calendar, Users, Award, TrendingUp, Plus, Package, Truck, Percent, Wallet, ArrowDownToLine, ShieldCheck } from "lucide-react";
+import { DollarSign, Calendar, Users, Award, TrendingUp, Plus, Package, Truck, Percent, Wallet, ArrowDownToLine } from "lucide-react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -55,13 +55,6 @@ const promotionRules = [
   { id: 2, name: "Combo Save $20", window: "Aug 20 - Aug 31", appliedTo: "Packages", status: "Scheduled" },
 ];
 
-const registrationOrders = [
-  { id: "BOOK-2390", member: "Hà My", plan: "8-week Strength", status: "processing", date: "Aug 14", total: "$420" },
-  { id: "BOOK-2381", member: "Anh Tuấn", plan: "Hybrid Coaching", status: "active", date: "Aug 12", total: "$310" },
-  { id: "BOOK-2374", member: "Khánh Linh", plan: "Nutrition Reset", status: "cancelled", date: "Aug 10", total: "$180" },
-  { id: "BOOK-2369", member: "Minh Châu", plan: "PT Drop-ins", status: "refunded", date: "Aug 09", total: "$96" },
-];
-
 export function DesktopPTDashboard() {
   const [showAddPackage, setShowAddPackage] = useState(false);
   const [productForm, setProductForm] = useState({
@@ -72,21 +65,6 @@ export function DesktopPTDashboard() {
     description: "",
   });
   const [withdrawAmount, setWithdrawAmount] = useState(500);
-
-  const statusTone = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-500/15 text-green-700";
-      case "processing":
-        return "bg-yellow-500/15 text-yellow-700";
-      case "cancelled":
-        return "bg-red-500/15 text-red-700";
-      case "refunded":
-        return "bg-blue-500/15 text-blue-700";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -494,65 +472,6 @@ export function DesktopPTDashboard() {
             </div>
           </Card>
         </div>
-
-        {/* Client order visibility */}
-        <Card className="mt-10 p-6 border-border bg-card">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-muted-foreground text-sm">PT booking commerce</p>
-              <h3 className="text-foreground">Client Orders & Sign-ups</h3>
-            </div>
-            <Badge className="border-0 bg-primary/10 text-primary">
-              <ShieldCheck className="w-3 h-3 mr-1" />
-              Protected payouts
-            </Badge>
-          </div>
-
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border">
-                <TableHead className="text-muted-foreground">Order</TableHead>
-                <TableHead className="text-muted-foreground">Member</TableHead>
-                <TableHead className="text-muted-foreground">Plan</TableHead>
-                <TableHead className="text-muted-foreground">Date</TableHead>
-                <TableHead className="text-muted-foreground">Status</TableHead>
-                <TableHead className="text-muted-foreground text-right">Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {registrationOrders.map((order) => (
-                <TableRow key={order.id} className="border-border">
-                  <TableCell className="text-foreground font-medium">{order.id}</TableCell>
-                  <TableCell className="text-muted-foreground">{order.member}</TableCell>
-                  <TableCell className="text-foreground">{order.plan}</TableCell>
-                  <TableCell className="text-muted-foreground">{order.date}</TableCell>
-                  <TableCell>
-                    <Badge className={`${statusTone(order.status)} border-0 capitalize`}>{order.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-foreground">{order.total}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          <div className="grid grid-cols-3 gap-4 mt-4 text-sm">
-            <div className="p-4 rounded-xl border border-border bg-background">
-              <p className="text-muted-foreground mb-1">Processing</p>
-              <p className="text-foreground text-xl">02</p>
-              <p className="text-muted-foreground text-xs">Approve or cancel pending slots</p>
-            </div>
-            <div className="p-4 rounded-xl border border-border bg-background">
-              <p className="text-muted-foreground mb-1">Active Programs</p>
-              <p className="text-foreground text-xl">18</p>
-              <p className="text-muted-foreground text-xs">Manage check-ins and milestones</p>
-            </div>
-            <div className="p-4 rounded-xl border border-border bg-background">
-              <p className="text-muted-foreground mb-1">Refund / Cancel</p>
-              <p className="text-foreground text-xl">03</p>
-              <p className="text-muted-foreground text-xs">Track withdrawals back to clients</p>
-            </div>
-          </div>
-        </Card>
       </div>
     </div>
   );
